@@ -1,6 +1,5 @@
 package com.theelixrlabs.User.service;
 
-import com.sun.security.auth.UserPrincipal;
 import com.theelixrlabs.User.model.Users;
 import com.theelixrlabs.User.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;

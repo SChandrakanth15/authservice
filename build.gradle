@@ -35,6 +35,8 @@ dependencies {
     implementation 'org.springframework.security:spring-security-config'
     implementation 'org.springframework.security:spring-security-web'
     implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'org.slf4j:slf4j-api:2.0.0' // SLF4J API
+    implementation 'ch.qos.logback:logback-classic:1.3.3' // Logback implementation
 
     //jwt dependencies
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
