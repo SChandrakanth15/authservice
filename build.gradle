@@ -1,0 +1,64 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.3'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.theelixrlabs'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)  // Using Java 17
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()  // Maven Central repository for dependencies
+}
+
+dependencies {
+    // MongoDB starter
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    // Servlet API for HttpSession
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+
+    // Spring Security starters
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-core'
+    implementation 'org.springframework.security:spring-security-config'
+    implementation 'org.springframework.security:spring-security-web'
+    implementation 'org.springframework.security:spring-security-crypto'
+
+    //jwt dependencies
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5' // for JSON processing
+
+    // Web starter
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Validation starter
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Lombok for reducing boilerplate code
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Testing dependencies
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'  // For security-related tests
+
+    // Optional: JUnit Platform Launcher if needed for running the tests from the IDE
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()  // Use JUnit 5 for testing
+}
