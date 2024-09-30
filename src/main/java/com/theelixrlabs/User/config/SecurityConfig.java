@@ -54,7 +54,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://127.0.0.1:5500","http://localhost","http://frontend-image")); // Frontend origin
+        configuration.setAllowedOrigins(List.of("http://127.0.0.1:5500","http://localhost","http://frontend-image","https://exr-138-frontend.nicepebble-15cceb5b.southindia.azurecontainerapps.io")); // Frontend origin
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
