@@ -1,0 +1,6 @@
+{
+  "connectionString": "InstrumentationKey=145ee4e3-4c26-4d7a-849c-e2b0115d0cde;IngestionEndpoint=https://southindia-0.in.applicationinsights.azure.com/;LiveEndpoint=https://southindia.livediagnostics.monitor.azure.com/;ApplicationId=ccc9080e-f238-419f-8606-c0dc7ab1b7a7",
+  "role": {
+    "name": "userservice"
+  }
+}
