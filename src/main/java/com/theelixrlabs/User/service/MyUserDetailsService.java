@@ -1,5 +1,6 @@
 package com.theelixrlabs.User.service;
 
+import com.theelixrlabs.User.constants.UserConstant;
 import com.theelixrlabs.User.model.Users;
 import com.theelixrlabs.User.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,7 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Users user = userRepo.findByUsername(username);
         if (user == null) {
-            System.out.println("User Not Found");
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException(UserConstant.USER_NOT_FOUND);
         }
         return User.builder()
                 .username(user.getUsername())
