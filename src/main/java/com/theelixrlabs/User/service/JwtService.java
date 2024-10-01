@@ -1,5 +1,6 @@
 package com.theelixrlabs.User.service;
 
+import com.theelixrlabs.User.constants.UserConstant;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -23,7 +24,7 @@ public class JwtService {
 
     public JwtService() {
         try {
-            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+            KeyGenerator keyGen = KeyGenerator.getInstance(UserConstant.HMAC_ALGORITHM);
             SecretKey sk = keyGen.generateKey();
             secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
         } catch (NoSuchAlgorithmException e) {

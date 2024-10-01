@@ -1,5 +1,7 @@
 package com.theelixrlabs.User.controller;
 
+import com.theelixrlabs.User.constants.ApiPathsConstant;
+import com.theelixrlabs.User.constants.UserConstant;
 import com.theelixrlabs.User.dto.LoginResponse;
 import com.theelixrlabs.User.model.Users;
 import com.theelixrlabs.User.service.JwtService;
@@ -12,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(ApiPathsConstant.USERS_BASE)
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -27,13 +29,13 @@ public class AuthController {
         this.userDetailsService = userDetailsService;
     }
 
-    @PostMapping("/login")
+    @PostMapping(ApiPathsConstant.LOGIN_URL)
     public ResponseEntity<Object> login(@RequestBody Users users) {
         String response = userService.verify(users);
-        if (response.equals("User not found")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not Registered");
-        } else if (response.equals("Invalid password")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The Password is incorrect");
+        if (response.equals(UserConstant.USER_NOT_FOUND)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(UserConstant.USER_IS_NOT_REGISTERED);
+        } else if (response.equals(UserConstant.INVALID_PASSWORD)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(UserConstant.THE_PASSWORD_IS_INCORRECT);
         } else {
             LoginResponse loginResponse = LoginResponse.builder()
                     .username(users.getUsername())
@@ -44,8 +46,8 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/verify")
-    public ResponseEntity<String> verifyToken(@RequestHeader("Authorization") String token) {
+    @PostMapping(ApiPathsConstant.VERIFY_URL)
+    public ResponseEntity<String> verifyToken(@RequestHeader(UserConstant.AUTHORIZATION) String token) {
         try {
             // Extract the token (removing "Bearer " prefix)
             String jwtToken = token.substring(7);
@@ -54,12 +56,12 @@ public class AuthController {
             if (username != null) {
                 UserDetails user = userDetailsService.loadUserByUsername(username);
                 boolean isValid = jwtService.validateToken(jwtToken, user);
-                return isValid ? ResponseEntity.ok(username) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is invalid");
+                return isValid ? ResponseEntity.ok(username) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(UserConstant.TOKEN_IS_INVALID);
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is invalid");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(UserConstant.TOKEN_IS_INVALID);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is invalid");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(UserConstant.TOKEN_IS_INVALID);
         }
     }
 
