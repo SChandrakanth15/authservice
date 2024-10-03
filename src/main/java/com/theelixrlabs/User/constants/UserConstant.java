@@ -10,7 +10,4 @@ public class UserConstant {
     public static final String HMAC_ALGORITHM = "HmacSHA256";
     public static final String AUTHENTICATION_FAILED = "Authentication failed";
 
-
-
-
 }
