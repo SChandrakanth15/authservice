@@ -18,8 +18,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class JwtService {
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
+
     private String secretKey;
 
     public JwtService() {
@@ -27,20 +32,25 @@ public class JwtService {
             KeyGenerator keyGen = KeyGenerator.getInstance(UserConstant.HMAC_ALGORITHM);
             SecretKey sk = keyGen.generateKey();
             secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+            logger.debug("JWT Secret key generated successfully.");  // DEBUG log for key generation
         } catch (NoSuchAlgorithmException e) {
+            logger.error("Error generating JWT secret key", e);  // ERROR log for key generation failure
             throw new RuntimeException(e);
         }
     }
 
     public String generateToken(String username) {
+        logger.info("Generating token for user: {}", username);  // INFO log for token generation
         Map<String, Object> claims = new HashMap<>();
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setClaims(claims)  // Corrected: use setClaims() instead of claims()
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000))  // 1-hour validity
                 .signWith(getKey())
                 .compact();
+        logger.debug("Token generated successfully for user: {}", username);  // DEBUG log for token generation
+        return token;
     }
 
     private Key getKey() {
@@ -49,6 +59,7 @@ public class JwtService {
     }
 
     public String extractUserName(String token) {
+        logger.info("Extracting username from token");  // INFO log for extracting username
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -67,6 +78,7 @@ public class JwtService {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
+        logger.debug("Validating token for user: {}", userName);  // DEBUG log for token validation
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
