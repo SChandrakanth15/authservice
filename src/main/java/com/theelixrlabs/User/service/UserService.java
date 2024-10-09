@@ -9,9 +9,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private AuthenticationManager authManager;
 
@@ -22,29 +25,34 @@ public class UserService {
     private UserRepo userRepo;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Use your password encoder
+    private PasswordEncoder passwordEncoder;
 
     public String verify(Users user) {
-        // Fetch user from the database
+        logger.info("Verifying user login for username: {}", user.getUsername()); // INFO log for login attempt
         Users foundUser = userRepo.findByUsername(user.getUsername());
         if (foundUser == null) {
-            return UserConstant.USER_NOT_FOUND; // Handle user not found case
+            logger.warn("User not found: {}", user.getUsername());// WARN log for user not found
+            return UserConstant.USER_NOT_FOUND;
         }
 
-        // Check if the provided password matches the stored password
         if (!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
-            return UserConstant.INVALID_PASSWORD; // Handle password mismatch case
+            logger.warn("Invalid password for User: {}", user.getUsername());// WARN log for incorrect password
+            return UserConstant.INVALID_PASSWORD;
         }
-
-        // Authenticate the user
-        Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
-        );
-
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(foundUser.getUsername());
-        } else {
-            return UserConstant.AUTHENTICATION_FAILED; // Handle general authentication failure
+        try {
+            Authentication authentication = authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+            );
+            if (authentication.isAuthenticated()) {
+                logger.debug("User Authenticated Successfully: {}", user.getUsername());  // DEBUG log for successful authentication
+                return jwtService.generateToken(foundUser.getUsername());
+            } else {
+                logger.error("Authentication failed for the user: {}", user.getUsername()); // ERROR log for failed authentication
+                return UserConstant.AUTHENTICATION_FAILED;
+            }
+        } catch (Exception e) {
+            logger.error("Exception occured during authentication for user: {}", user.getUsername());// ERROR log for exception
+            return UserConstant.AUTHENTICATION_FAILED;
         }
     }
 }
