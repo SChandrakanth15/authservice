@@ -1,5 +1,6 @@
 package com.theelixrlabs.User.controller;
 
+import com.theelixrlabs.User.Filter.JwtFilter;
 import com.theelixrlabs.User.constants.ApiPathsConstant;
 import com.theelixrlabs.User.constants.UserConstant;
 import com.theelixrlabs.User.dto.LoginResponse;
@@ -7,6 +8,8 @@ import com.theelixrlabs.User.model.Users;
 import com.theelixrlabs.User.service.JwtService;
 import com.theelixrlabs.User.service.MyUserDetailsService;
 import com.theelixrlabs.User.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(ApiPathsConstant.USERS_BASE)
 public class AuthController {
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
@@ -49,8 +54,7 @@ public class AuthController {
     @PostMapping(ApiPathsConstant.VERIFY_URL)
     public ResponseEntity<String> verifyToken(@RequestHeader(UserConstant.AUTHORIZATION) String token) {
         try {
-            // Extract the token (removing "Bearer " prefix)
-            String jwtToken = token.substring(7);
+            String jwtToken = token.substring(7);  // Extract the token (removing "Bearer " prefix)
             String username = jwtService.extractUserName(jwtToken); // Extract username from JWT
 
             if (username != null) {
@@ -61,8 +65,8 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(UserConstant.TOKEN_IS_INVALID);
             }
         } catch (Exception e) {
+            logger.error("Error verifying token: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(UserConstant.TOKEN_IS_INVALID);
         }
     }
-
 }

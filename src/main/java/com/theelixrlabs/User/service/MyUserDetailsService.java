@@ -21,16 +21,22 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.info("Loading user details for username: {}", username); //INFO log for loading user details
-        Users user = userRepo.findByUsername(username);
-        if (user == null) {
-            logger.warn("User not found: {}", username); //WARN log for user not found
-            throw new UsernameNotFoundException(UserConstant.USER_NOT_FOUND);
+        try {
+            logger.info("Loading user details for username: {}", username);
+            Users user = userRepo.findByUsername(username);
+            if (user == null) {
+                logger.warn("User not found: {}", username);
+                throw new UsernameNotFoundException(UserConstant.USER_NOT_FOUND);
+            }
+            logger.debug("User details found for username: {}", username);
+            return User.builder()
+                    .username(user.getUsername())
+                    .password(user.getPassword())
+                    .build();
+        } catch (Exception e) {
+            logger.error("Error loading user by username: {}", e.getMessage());
+            throw new RuntimeException("Error fetching user details");
         }
-        logger.debug("User details found for username: {}", username); //DEBUG log for user details found
-        return User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .build(); // Return the Users instance directly
     }
+
 }
