@@ -36,11 +36,13 @@ public class UserService {
             logger.warn("User not found: {}", user.getUsername());
             return UserConstant.USER_NOT_FOUND;
         }
+        logger.debug("User found in repository: {}. Proceeding with password validation.", user.getUsername());
 
         if (!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
             logger.warn("Invalid password for User: {}", user.getUsername());
             return UserConstant.INVALID_PASSWORD;
         }
+        logger.debug("Password validation successful for user: {}. Proceeding with authentication.", user.getUsername());
 
         try {
             Authentication authentication = authManager.authenticate(
